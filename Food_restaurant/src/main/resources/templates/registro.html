@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro — Food Express</title>
+    <link th:href="@{/css/login.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<div class="login-container" style="width:370px;">
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:20px;">
+        <img th:src="@{/img/logo-food-express.png}" alt="FOOD-EXPRESS" width="80">
+        <h2 style="margin:0;color:#4fc3f7;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-weight:600;letter-spacing:1px;">
+            FOOD-EXPRESS
+        </h2>
+    </div>
+
+    <h3 style="margin:0 0 18px;color:#333;font-size:16px;">Crear cuenta</h3>
+
+    <form method="post" th:action="@{/registro}" id="form-registro"
+          onsubmit="return validarFormulario('form-registro')">
+
+        <div class="input-group">
+            <label>Nombre de usuario</label>
+            <input type="text" name="codUsuario"
+                   data-validar="alfanumerico" data-min="3" data-max="20"
+                   placeholder="Ej: jcori">
+        </div>
+        <div class="input-group">
+            <label>DNI</label>
+            <input type="text" name="dni"
+                   data-validar="dni"
+                   placeholder="Ej: 76478687">
+        </div>
+        <div class="input-group">
+            <label>Nombre completo</label>
+            <input type="text" name="nombre"
+                   data-validar="solo-letras" data-min="3" data-max="250"
+                   placeholder="Ej: Joel Cori Alarcon">
+        </div>
+        <div class="input-group">
+            <label>Contraseña</label>
+            <input type="password" name="contrasena" id="pass"
+                   data-validar="contrasena"
+                   placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="input-group">
+            <label>Confirmar contraseña</label>
+            <input type="password" name="confirmar"
+                   data-validar="requerido" data-igual-a="pass"
+                   placeholder="Repite la contraseña">
+        </div>
+
+        <button type="submit">Registrarse</button>
+    </form>
+
+    <div style="margin-top:14px;font-size:13px;color:#666;">
+        ¿Ya tienes cuenta?
+        <a th:href="@{/login}" style="color:#ff6b6b;font-weight:600;">Inicia sesión</a>
+    </div>
+
+    <div class="footer">Sistema de pedidos © 2026</div>
+</div>
+
+<script th:inline="javascript">
+    var MSG = /*[[${MSG} != null ? ${MSG} : 'null']]*/ 'null';
+    var LOGIN = /*[[${LOGIN} != null ? ${LOGIN} : 'null']]*/ 'null';
+    var ERROR = /*[[${ERROR} != null ? ${ERROR} : 'null']]*/ 'null';
+</script>
+
+<!-- Tu archivo de alertas maneja todos los casos -->
+<script th:src="@{/js/alerts.js}"></script>
+
+<!-- Validaciones de formulario -->
+<script th:src="@{/js/validaciones.js}"></script>
+</body>
+</html>

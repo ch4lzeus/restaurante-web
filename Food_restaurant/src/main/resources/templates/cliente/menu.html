@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Food Express - Carta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/cliente/style.css}" rel="stylesheet">
+</head>
+<body>
+<div id="cliente-header"></div>
+
+<main>
+    <section class="page-hero">
+        <div class="wrap page-hero-inner">
+            <div>
+                <span class="eyebrow">Carta</span>
+                <h1>Elige tu pedido</h1>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="buscador" placeholder="Buscar plato...">
+            </div>
+        </div>
+    </section>
+
+    <section class="filters-band">
+        <div class="wrap filter-row">
+            <span>Filtrar:</span>
+            <button class="filter-btn active" data-cat="Todos">Todos</button>
+            <button class="filter-btn" data-cat="Platos de fondo">Platos de fondo</button>
+            <button class="filter-btn" data-cat="Bebidas">Bebidas</button>
+        </div>
+    </section>
+
+    <section class="section-band">
+        <div class="wrap">
+            <p class="count-line">Mostrando <strong id="num-platos">0</strong> platos</p>
+            <div class="dish-grid" id="platos-grid"></div>
+            <div id="no-resultados" class="empty-state hidden">
+                <i class="fas fa-face-sad-tear"></i>
+                <h3>No encontramos platos</h3>
+                <p>Prueba con otro nombre o cambia el filtro.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div id="cliente-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    const CLIENTE_LOGUEADO = /*[[${session.usuarioRol == 'CLI'}]]*/ false;
+    const CLIENTE_NOMBRE = /*[[${session.usuarioNombre}]]*/ '';
+    window.platosData = /*[[${platosData}]]*/ [];
+</script>
+<script th:src="@{/js/cliente/components.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', initMenuPage);
+</script>
+</body>
+</html>

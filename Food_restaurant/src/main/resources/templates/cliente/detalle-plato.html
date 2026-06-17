@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Food Express - Detalle</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/cliente/style.css}" rel="stylesheet">
+</head>
+<body>
+<div id="cliente-header"></div>
+
+<main>
+    <section class="section-band">
+        <div class="wrap">
+            <a th:href="@{/cliente/menu}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Volver a la carta
+            </a>
+
+            <div class="detail-layout" id="detalle-contenido"></div>
+        </div>
+    </section>
+
+    <section class="section-band soft">
+        <div class="wrap">
+            <h2 class="section-title">Tambien te puede gustar</h2>
+            <div class="dish-grid compact" id="relacionados-grid"></div>
+        </div>
+    </section>
+</main>
+
+<div id="cliente-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    const CLIENTE_LOGUEADO = /*[[${session.usuarioRol == 'CLI'}]]*/ false;
+    const CLIENTE_NOMBRE = /*[[${session.usuarioNombre}]]*/ '';
+    window.platosData = /*[[${platosData}]]*/ [];
+</script>
+<script th:src="@{/js/cliente/components.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', initDetallePage);
+</script>
+</body>
+</html>

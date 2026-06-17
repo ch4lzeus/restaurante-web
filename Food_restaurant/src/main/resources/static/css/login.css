@@ -1,0 +1,129 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh; /* 🔥 cambio clave */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ff6b6b, #ffb347);
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* 🔥 evita salto cuando aparece SweetAlert */
+body.swal2-shown {
+    padding-right: 0 !important;
+}
+
+/* CONTENEDOR */
+.login-container {
+    background: #fff;
+    padding: 35px;
+    border-radius: 15px;
+    width: 320px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* INPUTS */
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #555;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 5px rgba(255,107,107,0.5);
+}
+
+/* BOTÓN */
+button {
+    width: 100%;
+    padding: 10px;
+    background: #ff6b6b;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #ff3b3b;
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* 🔥 ocultamos alertas antiguas (ya usas SweetAlert) */
+.alerta {
+    display: none;
+}
+
+/* DASH ALERTAS (puedes mantenerlas si quieres) */
+.alerta-dash {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    animation: fadeIn .4s ease;
+}
+
+.alerta-dash.exito {
+    background:#e0f7ea;
+    color:#1e7e34;
+    border:1px solid #b7dfcb;
+}
+
+.alerta-dash.error {
+    background:#ffe0e0;
+    color:#c0392b;
+    border:1px solid #f5c6cb;
+}
+
+/* ANIMACIÓN (una sola, limpia) */
+@keyframes fadeIn {
+    from {
+        opacity:0;
+        transform:translateY(-6px);
+    }
+    to {
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* BADGES */
+.bdg.adm  { background:#ede9fe; color:#5b21b6; }
+.bdg.chef { background:#fef3c7; color:#92400e; }
+.bdg.mese { background:#dbeafe; color:#1e40af; }
+.bdg.deli { background:#d1fae5; color:#065f46; }
+.bdg.cli  { background:#e0f0ff; color:#0c5ea8; }

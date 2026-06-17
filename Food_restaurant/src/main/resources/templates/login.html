@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link th:href="@{/css/login.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="login-container">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:20px;">
+        <img th:src="@{/img/logo-food-express.png}" alt="FOOD-EXPRESS" width="80">
+        <h2 style="margin:0; color:#4fc3f7;">FOOD-EXPRESS</h2>
+    </div>
+
+    <form method="POST" th:action="@{/login}" id="form-login" onsubmit="return validarFormulario('form-login')">
+        <div class="input-group">
+            <label>Usuario</label>
+            <input type="text" name="username" data-validar="requerido" placeholder="Tu usuario">
+        </div>
+        <div class="input-group">
+            <label>Contraseña</label>
+            <input type="password" name="password" data-validar="requerido" placeholder="Tu contraseña">
+        </div>
+        <div style="text-align:right; margin-top:-8px; margin-bottom:14px;">
+            <a th:href="@{/recuperar}" style="font-size:12px; color:#ff6b6b;">¿Olvidaste tu contraseña?</a>
+        </div>
+        <button type="submit">Ingresar</button>
+    </form>
+
+    <div style="margin-top:14px; font-size:13px; color:#666;">
+        ¿No tienes cuenta? <a th:href="@{/registro}" style="color:#ff6b6b; font-weight:600;">Regístrate</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script th:inline="javascript">
+    const ERROR = /*[[${ERROR}]]*/ 'null';
+    const MSG = /*[[${MSG}]]*/ 'null';
+    const LOGIN = /*[[${LOGIN}]]*/ 'null';
+    const REDIRECT_URL = /*[[${REDIRECT_URL}]]*/ '/dashboard';
+</script>
+
+<script th:src="@{/js/alerts.js}"></script>
+<script th:src="@{/js/validaciones.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Food Express - Carrito</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/cliente/style.css}" rel="stylesheet">
+</head>
+<body>
+<div id="cliente-header"></div>
+
+<main>
+    <section class="section-band">
+        <div class="wrap">
+            <div class="section-head">
+                <div>
+                    <span class="eyebrow">Carrito</span>
+                    <h1 class="page-title"><i class="fas fa-shopping-cart"></i> Tu pedido</h1>
+                </div>
+                <span id="badge-total-items" class="items-badge"></span>
+            </div>
+
+            <div class="cart-layout">
+                <div class="cart-list" id="carrito-lista"></div>
+
+                <aside class="summary-box" id="resumen-col">
+                    <div class="summary-head"><i class="fas fa-receipt"></i> Resumen</div>
+                    <div class="summary-body">
+                        <p class="field-title">Tipo de pedido</p>
+                        <div class="segmented">
+                            <button class="active" id="btn-local" onclick="setTipo('local')">
+                                <i class="fas fa-store"></i> Local
+                            </button>
+                            <button id="btn-delivery" onclick="setTipo('delivery')">
+                                <i class="fas fa-truck"></i> Delivery
+                            </button>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <strong id="res-subtotal">S/ 0.00</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Envio</span>
+                            <strong id="res-envio">Gratis</strong>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <strong id="res-total">S/ 0.00</strong>
+                        </div>
+
+                        <p class="field-title">Metodo de pago</p>
+                        <div class="payment-row">
+                            <button class="payment-opt active" onclick="setPago(this, 'efectivo')">
+                                <i class="fas fa-money-bill-wave"></i> Efectivo
+                            </button>
+                            <button class="payment-opt" onclick="setPago(this, 'tarjeta')">
+                                <i class="fas fa-credit-card"></i> Tarjeta
+                            </button>
+                            <button class="payment-opt" onclick="setPago(this, 'yape')">
+                                <i class="fas fa-mobile-screen"></i> Yape
+                            </button>
+                        </div>
+
+                        <div id="delivery-fields" style="display:none; margin-top:1rem;">
+                            <p class="field-title">Datos de delivery</p>
+                            <div class="summary-form">
+                                <input type="text" id="delivery-direccion" placeholder="Direccion exacta">
+                                <input type="text" id="delivery-telefono" placeholder="Telefono de contacto">
+                                <textarea id="delivery-descripcion" rows="3" placeholder="Referencia o indicaciones"></textarea>
+                            </div>
+                        </div>
+
+                        <button class="btn-confirm" onclick="confirmarOrden()">
+                            <i class="fas fa-check-circle"></i> Confirmar orden
+                        </button>
+                        <a th:href="@{/cliente/menu}" class="text-link center">Seguir comprando</a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div id="cliente-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    const CLIENTE_LOGUEADO = /*[[${session.usuarioRol == 'CLI'}]]*/ false;
+    const CLIENTE_NOMBRE = /*[[${session.usuarioNombre}]]*/ '';
+    const CLIENTE_COD = /*[[${clienteCod}]]*/ '';
+    window.platosData = /*[[${platosData}]]*/ [];
+</script>
+<script th:src="@{/js/cliente/components.js}"></script>
+<script th:src="@{/js/cliente/carrito.js}"></script>
+</body>
+</html>

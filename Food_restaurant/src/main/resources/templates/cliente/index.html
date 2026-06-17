@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Food Express - Cliente</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/cliente/style.css}" rel="stylesheet">
+</head>
+<body>
+<div id="cliente-header"></div>
+
+<main>
+    <section class="client-hero">
+        <div class="hero-copy">
+            <span class="eyebrow">Pedidos online</span>
+            <h1>Food Express</h1>
+            <p>Explora la carta, agrega tus platos favoritos y arma tu pedido en pocos pasos.</p>
+            <div class="hero-actions">
+                <a th:href="@{/cliente/menu}" class="btn-primary-food">
+                    <i class="fas fa-utensils"></i> Ver carta
+                </a>
+                <a th:if="${session.usuarioRol != 'CLI'}" th:href="@{/login}" class="btn-outline-food">
+                    <i class="fas fa-user"></i> Iniciar sesion
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-band">
+        <div class="wrap">
+            <h2 class="section-title">Servicios</h2>
+            <div class="service-grid">
+                <article class="service-item">
+                    <i class="fas fa-truck-fast"></i>
+                    <h3>Delivery</h3>
+                    <p>Recibe tu pedido en casa con seguimiento simple y tiempos claros.</p>
+                </article>
+                <article class="service-item">
+                    <i class="fas fa-store"></i>
+                    <h3>En local</h3>
+                    <p>Haz tu pedido y recógelo o disfrútalo en el restaurante.</p>
+                </article>
+                <article class="service-item">
+                    <i class="fas fa-receipt"></i>
+                    <h3>Resumen</h3>
+                    <p>Confirma tu orden y visualiza un voucher rápido del pedido.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-band soft">
+        <div class="wrap">
+            <div class="section-head">
+                <h2 class="section-title">Platos destacados</h2>
+                <a th:href="@{/cliente/menu}" class="text-link">Ver todo <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="dish-grid" id="destacados-grid"></div>
+        </div>
+    </section>
+</main>
+
+<div id="cliente-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    const CLIENTE_LOGUEADO = /*[[${session.usuarioRol == 'CLI'}]]*/ false;
+    const CLIENTE_NOMBRE = /*[[${session.usuarioNombre}]]*/ '';
+    window.platosData = /*[[${platosData}]]*/ [];
+</script>
+<script th:src="@{/js/cliente/components.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => renderDestacados('destacados-grid'));
+</script>
+</body>
+</html>

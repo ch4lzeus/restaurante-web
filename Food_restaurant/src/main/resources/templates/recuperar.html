@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar contraseña</title>
+    <link th:href="@{/css/login.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<div class="login-container">
+
+    <!-- Logo y título -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:20px;">
+        <img th:src="@{/img/logo-food-express.png}" alt="FOOD-EXPRESS" width="80">
+        <h2 style="margin:0;color:#4fc3f7;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-weight:600;letter-spacing:1px;">
+            FOOD-EXPRESS
+        </h2>
+    </div>
+
+    <h3 style="margin:0 0 8px;color:#333;font-size:16px;">Recuperar contraseña</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:18px;">Ingresa tu DNI y tu nueva contraseña.</p>
+
+    <!-- Formulario de recuperación -->
+    <form method="post" th:action="@{/recuperar}" id="form-recuperar">
+        <div class="input-group">
+            <label>DNI registrado</label>
+            <input type="text" name="dni" maxlength="9" required placeholder="Tu DNI">
+        </div>
+        <div class="input-group">
+            <label>Nueva contraseña</label>
+            <input type="password" name="nuevaPass" required placeholder="Nueva contraseña">
+        </div>
+        <div class="input-group">
+            <label>Confirmar nueva contraseña</label>
+            <input type="password" name="confirmar" required placeholder="Repite la contraseña">
+        </div>
+        <button type="submit">Actualizar contraseña</button>
+    </form>
+
+    <div style="margin-top:14px;font-size:13px;color:#666;">
+        <a th:href="@{/login}" style="color:#ff6b6b;font-weight:600;">← Volver al login</a>
+    </div>
+
+    <div class="footer">Sistema de pedidos © 2026</div>
+</div>
+
+<!-- Pasamos variables de Thymeleaf al JS -->
+<script th:inline="javascript">
+    var MSG = /*[[${MSG}]]*/ 'null';
+    var LOGIN = /*[[${LOGIN}]]*/ 'null';
+    var ERROR = /*[[${ERROR}]]*/ 'null';
+</script>
+<script th:src="@{/js/alerts.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,1658 @@
+﻿<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Food Express - Panel Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/dashboard2.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Modal 1 -->
+<div class="mo" id="mo-main">
+    <div class="mo-box">
+        <h4 id="mo-title">Formulario</h4>
+        <div id="mo-body"></div>
+        <div class="mo-btns">
+            <button class="btn-cancel" onclick="cMo('mo-main')">Cancelar</button>
+            <button class="btn-save" id="mo-btn">Guardar</button>
+        </div>
+    </div>
+</div>
+<!-- Modal 2 -->
+<div class="mo" id="mo-comp">
+    <div class="mo-box" style="max-width:500px;">
+        <h4>Comprobante</h4>
+        <div id="mo-comp-body"></div>
+        <div class="mo-btns">
+            <button class="btn-cancel" onclick="cMo('mo-comp')">Cerrar</button>
+            <button class="btn-save" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal EDITAR -->
+<div class="mo" id="mo-editar-usr">
+    <div class="mo-box">
+        <h4>Editar usuario</h4>
+        <form method="POST" th:action="@{/usuarios/editar}">
+            <input type="hidden" name="codUsuarioOrig" id="edit-cod-orig">
+
+            <div class="fg">
+                <label>Usuario</label>
+                <input type="text" id="edit-cod" name="codUsuario"
+                       style="background:#f8f9fa;" readonly>
+            </div>
+            <div class="fg">
+                <label>Nombre completo</label>
+                <input type="text" id="edit-nombre" name="nombre" maxlength="250" required>
+            </div>
+            <div class="fg">
+                <label>DNI</label>
+                <input type="text" id="edit-dni" name="dni" maxlength="9" required>
+            </div>
+            <div class="fg">
+                <label>Rol</label>
+                <select id="edit-rol" name="codRol" required>
+                    <option value="ADMIN">Administrador</option>
+                    <option value="CHEF">Cocinero</option>
+                    <option value="MESE">Mesero</option>
+                    <option value="DELI">Delivery</option>
+                    <option value="CLI">Cliente</option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>Nueva contrasena <span style="font-size:.7rem;color:var(--mu);">(dejar vacio para no cambiar)</span></label>
+                <input type="password" name="contrasena" placeholder="Nueva contrasena...">
+            </div>
+
+            <div class="mo-btns">
+                <button type="button" class="btn-cancel" onclick="cMo('mo-editar-usr')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i> Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal NUEVA MESA -->
+<div class="mo" id="mo-mesa">
+    <div class="mo-box">
+        <h4>Nueva mesa</h4>
+        <form method="POST" th:action="@{/mesas/registrar}">
+            <div class="fg">
+                <label>NroMesa</label>
+                <input type="text" name="nroMesa" maxlength="10" readonly
+                       style="background:#f0f0f0;cursor:not-allowed;">
+            </div>
+            <div class="fg">
+                <label>Descripcion</label>
+                <input type="text" name="descripcion" maxlength="160" placeholder="Mesa terraza, ventana, salon...">
+            </div>
+            <div class="fg">
+                <label>Capacidad</label>
+                <input type="number" name="capacidad" min="1" value="4" required>
+            </div>
+            <div class="fg">
+                <label>Estado</label>
+                <select name="estado" required>
+                    <option value="ACT">Activa</option>
+                    <option value="INA">Inactiva</option>
+                </select>
+            </div>
+            <div class="mo-btns">
+                <button type="button" class="btn-cancel" onclick="cMo('mo-mesa')">Cancelar</button>
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar mesa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal EDITAR MESA -->
+<div class="mo" id="mo-editar-mesa">
+    <div class="mo-box">
+        <h4>Editar mesa</h4>
+        <form method="POST" th:action="@{/mesas/editar}">
+            <input type="hidden" id="edit-mesa-nro" name="nroMesa">
+            <div class="fg">
+                <label>Descripcion</label>
+                <input type="text" id="edit-mesa-desc" name="descripcion" maxlength="160">
+            </div>
+            <div class="fg">
+                <label>Capacidad</label>
+                <input type="number" id="edit-mesa-cap" name="capacidad" min="1" required>
+            </div>
+            <div class="fg">
+                <label>Estado</label>
+                <select id="edit-mesa-est" name="estado" required>
+                    <option value="ACT">Activa</option>
+                    <option value="INA">Inactiva</option>
+                </select>
+            </div>
+            <div class="mo-btns">
+                <button type="button" class="btn-cancel" onclick="cMo('mo-editar-mesa')">Cancelar</button>
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal NUEVA RESERVA -->
+<div class="mo" id="mo-reserva">
+    <div class="mo-box">
+        <h4>Nueva reserva</h4>
+        <form method="POST" th:action="@{/reservas/registrar}">
+            <div class="fg">
+                <label>CodReserva</label>
+                <input type="text" id="res-cod" name="codReserva" maxlength="20" readonly
+                       style="background:#f0f0f0;cursor:not-allowed;">
+            </div>
+            <div class="fg">
+                <label>Mesa</label>
+                <select name="nroMesa" required>
+                    <option value="">-- Selecciona una mesa --</option>
+                    <option th:each="m : ${listaMesasAct}"
+                            th:value="${m.nroMesa}"
+                            th:text="${m.nroMesa + ' - ' + m.descripcion + ' (cap. ' + m.capacidad + ')'}">
+                    </option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>Cliente</label>
+                <select name="codCliente" required>
+                    <option value="">-- Selecciona un cliente --</option>
+                    <option th:each="c : ${listaClientes}"
+                            th:value="${c.codCliente}"
+                            th:text="${c.codCliente + ' - ' + c.razonSocial}">
+                    </option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>Fecha y hora</label>
+                <input type="datetime-local" name="fecReserva" required>
+            </div>
+            <div class="fg">
+                <label>Estado</label>
+                <select name="estado" required>
+                    <option value="ACT">Activa</option>
+                    <option value="INA">Cancelada</option>
+                </select>
+            </div>
+            <div class="mo-btns">
+                <button type="button" class="btn-cancel" onclick="cMo('mo-reserva')">Cancelar</button>
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> Guardar reserva</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal EDITAR PLATO -->
+<div class="mo" id="mo-editar-ali">
+    <div class="mo-box">
+        <h4>Editar plato</h4>
+        <form method="POST" th:action="@{/alimentos/editar}" enctype="multipart/form-data">
+            <div class="fg">
+                <label>Codigo</label>
+                <input type="text" id="edit-ali-cod" name="codAlimento" style="background:#f8f9fa;" readonly>
+            </div>
+            <div class="fg">
+                <label>Categoria</label>
+                <select id="edit-ali-cat" name="codCategoria" required>
+                    <option th:each="cat : ${listaCategorias}"
+                            th:value="${cat.codCategoria}"
+                            th:text="${cat.nombre}">Categoria</option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>Nombre</label>
+                <input type="text" id="edit-ali-nombre" name="nombre" maxlength="160" required>
+            </div>
+            <div class="fg">
+                <label>Precio</label>
+                <input type="number" id="edit-ali-precio" name="precio" min="0" step="0.10" required>
+            </div>
+            <div class="fg">
+                <label>Descuento promocion</label>
+                <input type="number" id="edit-ali-descuento" name="descuentoPromocion" min="0" step="0.10">
+            </div>
+            <div class="fg">
+                <label>Imagen del plato</label>
+                <!-- Hidden para conservar imagen actual si no sube nueva -->
+                <input type="hidden" id="edit-ali-img-actual" name="rutaImagenActual">
+                <input type="file" id="edit-ali-img" name="imagen" accept="image/*">
+                <small id="edit-ali-img-preview" style="color:#888;font-size:.75rem;margin-top:.25rem;display:block;"></small>
+            </div>
+            <div class="fg">
+                <label>Estado</label>
+                <select id="edit-ali-estado" name="estado" required>
+                    <option value="ACT">Visible</option>
+                    <option value="INA">Oculto</option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>Descripcion</label>
+                <input type="text" id="edit-ali-descripcion" name="descripcion" maxlength="500">
+            </div>
+            <div class="mo-btns">
+                <button type="button" class="btn-cancel" onclick="cMo('mo-editar-ali')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i> Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MENU DEL PANEL -->
+<div class="sb-overlay" onclick="togSidebar()"></div>
+<div class="pw">
+    <aside class="sidebar">
+        <a href="#" class="sb-brand" onclick="return showSec('dashboard', this)">
+            <div class="bi"><i class="fas fa-burger"></i></div>
+            <div class="bt">FOOD EXPRESS <span>Panel Administrador</span></div>
+        </a>
+        <p class="sb-lbl">Menu principal</p>
+        <ul class="sb-nav">
+            <li th:if="${session.usuarioRol == 'ADMIN'}">
+                <a href="#" class="active" onclick="return showSec('dashboard', this)">
+                    <i class="ni fas fa-house"></i> Inicio
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN'}">
+                <a href="#" onclick="return showSec('usuarios', this)">
+                    <i class="ni fas fa-users"></i> Usuarios
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN'}">
+                <a href="#" onclick="return showTab('cocina', 'alimentos', this)">
+                    <i class="ni fas fa-book-open"></i> Menu / Carta
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'MESE'}">
+                <a href="#" onclick="return showSec('mesas', this)">
+                    <i class="ni fas fa-chair"></i> Mesas
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'CHEF' || session.usuarioRol == 'MESE'}">
+                <a href="#" onclick="return showTab('pedidos', 'gestped', this)" id="nav-ped">
+                    <i class="ni fas fa-receipt"></i> Pedidos <span class="nb" id="bdg-ped">0</span>
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'CHEF'}">
+                <a href="#" onclick="return showSec('cocina-pedidos', this)">
+                    <i class="ni fas fa-fire-burner"></i> Cocina
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'DELI'}">
+                <a href="#" onclick="return showTab('entregas', 'gestent', this)">
+                    <i class="ni fas fa-truck-fast"></i> Delivery
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'MESE'}">
+                <a href="#" onclick="cargarSeccionPagos(); return showTab('pagos', 'gencomp', this)">
+                    <i class="ni fas fa-money-bill-wave"></i> Pagos
+                </a>
+            </li>
+            <li th:if="${session.usuarioRol == 'ADMIN'}">
+                <a href="#" onclick="cargarSeccionReportes(); return showTab('reportes', 'ventas', this)">
+                    <i class="ni fas fa-chart-bar"></i> Reportes
+                </a>
+            </li>
+        </ul>
+        <div class="sb-footer">
+            <a href="#" class="tb-ic" onclick="doLogout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesion
+            </a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <div class="topbar">
+            <button class="btn-ham" onclick="togSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="tb-search"><i class="fas fa-search"></i><input type="text" placeholder="Buscar..."></div>
+            <div class="tb-right">
+                <a href="#" class="tb-ic"><i class="fas fa-bell"></i></a>
+                <div class="tb-user">
+                    <div class="tb-av" id="tb-av"
+                         th:text="${#strings.isEmpty(session.usuarioNombre) ? 'A' : #strings.substring(session.usuarioNombre, 0, 1)}">A</div>
+                    <span id="tb-nom" th:text="${session.usuarioNombre ?: 'Usuario'}">Usuario</span>
+                </div>
+                <a href="#" class="tb-ic" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- INICIO -->
+            <div th:if="${session.usuarioRol == 'ADMIN'}" class="sec active" id="sec-dashboard">
+                <h2 class="page-title">Inicio</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e0f0ff;color:#3a5ba0;"><i class="fas fa-receipt"></i></div>
+                        <div><div class="stat-num" th:text="${cntPedidosHoy}">0</div><div class="stat-lbl">Total pedidos</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-money-bill-wave"></i></div>
+                        <div><div class="stat-num" th:text="'S/ ' + ${#numbers.formatDecimal(totalCobradoHoy, 1, 2)}">S/ 0</div><div class="stat-lbl">Cobrado hoy</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-clock"></i></div>
+                        <div><div class="stat-num" th:text="${cntPendientes}">0</div><div class="stat-lbl">Pendientes</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fas fa-utensils"></i></div>
+                        <div><div class="stat-num" th:text="${listaAlimentos != null ? #lists.size(listaAlimentos) : 0}">0</div><div class="stat-lbl">Platos registrados</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fce7f3;color:#be185d;"><i class="fas fa-users"></i></div>
+                        <div><div class="stat-num" th:text="${listaUsuarios != null ? #lists.size(listaUsuarios) : 0}">0</div><div class="stat-lbl">Usuarios</div></div>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:1rem;align-items:start;">
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Trabajo pendiente</span></div>
+                        <table>
+                            <thead>
+                            <tr><th>Area</th><th>Que revisar</th><th>Acceso</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><span class="bdg act">Carta</span></td>
+                                <td>Agregar, editar o desactivar platos del menu online.</td>
+                                <td><button class="bta view" onclick="showTab('cocina', 'alimentos', null)"><i class="fas fa-arrow-right"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><span class="bdg chef">Pedidos</span></td>
+                                <td>Revisar pedidos pendientes de cocina o atencion en mesa.</td>
+                                <td><button class="bta view" onclick="showTab('pedidos', 'gestped', null)"><i class="fas fa-arrow-right"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><span class="bdg deli">Delivery</span></td>
+                                <td>Controlar entregas online por direccion y estado.</td>
+                                <td><button class="bta view" onclick="showTab('entregas', 'gestent', null)"><i class="fas fa-arrow-right"></i></button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Accesos rapidos</span></div>
+                        <div style="padding:1rem;display:grid;gap:.7rem;">
+                            <button class="btn-n" onclick="showTab('cocina', 'alimentos', null)"><i class="fas fa-book-open"></i> Gestionar menu</button>
+                            <button class="btn-n" onclick="showSec('usuarios', null)"><i class="fas fa-users"></i> Ver usuarios</button>
+                            <button class="btn-n" onclick="showSec('mesas', null)"><i class="fas fa-chair"></i> Ver mesas</button>
+                            <button class="btn-n" onclick="showTab('reportes', 'ventas', null)"><i class="fas fa-chart-line"></i> Reportes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USUARIOS -->
+            <div th:if="${session.usuarioRol == 'ADMIN'}" class="sec" id="sec-usuarios">
+                <h2 class="page-title">Usuarios</h2>
+                <div class="sec-tabs">
+                    <button class="sec-tab active" onclick="sTab('usuarios', 'lista', this)">Lista de usuarios</button>
+                    <button class="sec-tab" onclick="sTab('usuarios', 'nuevo', this)">Registrar nuevo</button>
+                </div>
+
+                <div class="tab-pane active" id="usu-lista">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Personal registrado</span>
+                            <div class="tc-tools">
+                                <div class="tc-search">
+                                    <input type="text" id="usr-buscar" placeholder="Buscar..." oninput="filtrarUsuarios()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Nombre</th>
+                                    <th>DNI</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Fec. Creacion</th>
+                                    <th>Accion</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tb-usuarios">
+                                <tr th:each="u : ${listaUsuarios}">
+                                    <td th:text="${u.codUsuario}">USR001</td>
+                                    <td th:text="${u.nombre}">Nombre</td>
+                                    <td th:text="${u.dni}">00000000</td>
+                                    <td th:switch="${u.codRol}">
+                                        <span th:case="'ADMIN'" class="bdg adm">Administrador</span>
+                                        <span th:case="'CHEF'" class="bdg chef">Cocinero</span>
+                                        <span th:case="'MESE'" class="bdg mese">Mesero</span>
+                                        <span th:case="'DELI'" class="bdg deli">Delivery</span>
+                                        <span th:case="'CLI'" class="bdg cli">Cliente</span>
+                                        <span th:case="*" class="bdg" th:text="${u.codRol}">Rol</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${u.estado == 'ACT'}" class="bdg act">Activo</span>
+                                        <span th:unless="${u.estado == 'ACT'}" class="bdg ina">Inactivo</span>
+                                    </td>
+                                    <td th:text="${u.fecCreacion}">2026-05-25</td>
+                                    <td class="td-actions">
+                                        <button class="bta edit btn-editar-usr" title="Editar"
+                                                th:data-cod="${u.codUsuario}"
+                                                th:data-nombre="${u.nombre}"
+                                                th:data-dni="${u.dni}"
+                                                th:data-rol="${u.codRol}"
+                                                th:data-estado="${u.estado}">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <button th:if="${u.estado == 'ACT'}" class="bta del" title="Desactivar"
+                                                th:data-cod="${u.codUsuario}"
+                                                onclick="confirmarDesactivar(this.dataset.cod)">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                        <button th:unless="${u.estado == 'ACT'}" class="bta view" title="Activar"
+                                                th:data-cod="${u.codUsuario}"
+                                                onclick="confirmarActivar(this.dataset.cod)">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listaUsuarios)}">
+                                    <td colspan="7" style="text-align:center;color:var(--mu);padding:2rem;">
+                                        Sin usuarios registrados.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tc-ft">
+                            <span id="usr-count" th:text="|${#lists.size(listaUsuarios)} registros|">0 registros</span>
+                            <div class="pag">
+                                <button>Anterior</button>
+                                <button class="active">1</button>
+                                <button>Siguiente</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="usu-nuevo">
+                    <div class="tc" style="max-width:520px;">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Registrar nuevo usuario</span>
+                        </div>
+                        <div style="padding:1.25rem;">
+                            <form method="POST" th:action="@{/usuarios/registrar}">
+
+                                <div class="fg">
+                                    <label>Nombre de usuario (login)</label>
+                                    <input type="text" name="codUsuario" maxlength="20" required
+                                           placeholder="Ej: jperez">
+                                </div>
+                                <div class="fg">
+                                    <label>DNI</label>
+                                    <input type="text" name="dni" maxlength="9" required
+                                           placeholder="Ej: 12345678">
+                                </div>
+                                <div class="fg">
+                                    <label>Nombre completo</label>
+                                    <input type="text" name="nombre" maxlength="250" required
+                                           placeholder="Ej: Juan Perez Lopez">
+                                </div>
+                                <div class="fg">
+                                    <label>Rol</label>
+                                    <select name="codRol" required>
+                                        <option value="">-- Selecciona un rol --</option>
+                                        <option value="ADMIN">Administrador</option>
+                                        <option value="CHEF">Cocinero</option>
+                                        <option value="MESE">Mesero</option>
+                                        <option value="DELI">Delivery</option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>Contrasena</label>
+                                    <input type="password" name="contrasena" required
+                                           placeholder="Minimo 6 caracteres">
+                                </div>
+                                <div class="fg">
+                                    <label>Confirmar contrasena</label>
+                                    <input type="password" name="confirmar" required
+                                           placeholder="Repite la contrasena">
+                                </div>
+
+                                <div style="display:flex;gap:.75rem;margin-top:1rem;">
+                                    <button type="submit" class="btn-n" style="flex:1;justify-content:center;">
+                                        <i class="fas fa-save"></i> Registrar usuario
+                                    </button>
+                                    <button type="reset" class="btn-cancel" style="flex:1;">
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- CATALOGO -->
+            <div th:if="${session.usuarioRol == 'ADMIN'}" class="sec" id="sec-catalogo">
+                <h2 class="page-title">Catalogo</h2>
+                <div class="sec-tabs">
+                    <button class="sec-tab active" onclick="sTab('catalogo', 'comprobante', this)">Tipo Comprobante</button>
+                    <button class="sec-tab" onclick="sTab('catalogo', 'documento', this)">Tipo Documento</button>
+                    <button class="sec-tab" onclick="sTab('catalogo', 'categoria', this)">Categorias</button>
+                    <button class="sec-tab" onclick="sTab('catalogo', 'metodopago', this)">Metodo de Pago</button>
+                </div>
+
+                <div class="tab-pane active" id="cat-comprobante">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Tipos de comprobante</span>
+                            <div class="tc-tools">
+                                <button class="btn-n" onclick="oMo('Nuevo tipo de comprobante', fComp())"><i class="fas fa-plus"></i> Nuevo</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Cod</th>
+                                <th>Nombre</th>
+                                <th>Usu.Creacion</th>
+                                <th>Fec.Creacion</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="ali : ${listaAlimentos}">
+                                <td th:text="${ali.codAlimento}">ALI001</td>
+                                <td th:text="${ali.nombre}">Pollo a la Brasa</td>
+                                <td th:text="${ali.codCategoria}">CAT001</td>
+                                <td th:text="${ali.descripcion}">Descripcion</td>
+                                <td th:text="|S/ ${ali.precio}|">S/ 0.00</td>
+                                <td th:text="${ali.descuentoPromocion}">0</td>
+                                <td>
+                                    <span th:if="${ali.estado == 'ACT'}" class="bdg act">Activo</span>
+                                    <span th:unless="${ali.estado == 'ACT'}" class="bdg ina">Inactivo</span>
+                                </td>
+                                <td th:text="${ali.usuCreacion}">dbo</td>
+                                <td th:text="${ali.fecCreacion}">2026-05-27</td>
+                                <td class="td-actions">
+                                    <button th:if="${ali.estado == 'ACT'}" class="bta del" title="Desactivar"
+                                            th:data-cod="${ali.codAlimento}"
+                                            onclick="confirmarDesactivarAlimento(this.dataset.cod)">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    <button th:unless="${ali.estado == 'ACT'}" class="bta view" title="Activar"
+                                            th:data-cod="${ali.codAlimento}"
+                                            onclick="confirmarActivarAlimento(this.dataset.cod)">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listaAlimentos)}">
+                                <td colspan="10" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    Sin alimentos registrados.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="tc-ft">
+                            <span th:text="|${#lists.size(listaCategorias)} registros|">0 registros</span>
+                            <div class="pag">
+                                <button>Anterior</button>
+                                <button class="active">1</button>
+                                <button>Siguiente</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="cat-documento">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Tipos de documento</span>
+                            <div class="tc-tools">
+                                <button class="btn-n" onclick="oMo('Nuevo tipo de documento', fDoc())"><i class="fas fa-plus"></i> Nuevo</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Cod</th>
+                                <th>Nombre</th>
+                                <th>Usu.Creacion</th>
+                                <th>Fec.Creacion</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="ali : ${listaAlimentos}">
+                                <td th:text="${ali.codAlimento}">ALI001</td>
+                                <td th:text="${ali.nombre}">Pollo a la Brasa</td>
+                                <td th:text="${ali.codCategoria}">CAT001</td>
+                                <td th:text="${ali.descripcion}">Descripcion</td>
+                                <td th:text="|S/ ${ali.precio}|">S/ 0.00</td>
+                                <td th:text="${ali.descuentoPromocion}">0</td>
+                                <td>
+                                    <span th:if="${ali.estado == 'ACT'}" class="bdg act">Activo</span>
+                                    <span th:unless="${ali.estado == 'ACT'}" class="bdg ina">Inactivo</span>
+                                </td>
+                                <td th:text="${ali.usuCreacion}">dbo</td>
+                                <td th:text="${ali.fecCreacion}">2026-05-27</td>
+                                <td class="td-actions">
+                                    <button th:if="${ali.estado == 'ACT'}" class="bta del" title="Desactivar"
+                                            th:data-cod="${ali.codAlimento}"
+                                            onclick="confirmarDesactivarAlimento(this.dataset.cod)">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    <button th:unless="${ali.estado == 'ACT'}" class="bta view" title="Activar"
+                                            th:data-cod="${ali.codAlimento}"
+                                            onclick="confirmarActivarAlimento(this.dataset.cod)">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listaAlimentos)}">
+                                <td colspan="10" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    Sin alimentos registrados.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="tc-ft">
+                            <span>0 registros</span>
+                            <div class="pag">
+                                <button>Anterior</button>
+                                <button class="active">1</button>
+                                <button>Siguiente</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="cat-categoria">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Categorias de alimentos</span>
+                            <div class="tc-tools"></div>
+                        </div>
+                        <form method="POST" th:action="@{/categorias/registrar}" style="padding:1rem;display:grid;grid-template-columns:140px 1fr auto;gap:.75rem;align-items:end;">
+                            <!-- Registramos categorias desde Thymeleaf para que la carta use datos reales de BD. -->
+                            <div class="fg" style="margin:0;">
+                                <label>Codigo</label>
+                                <input type="text" name="codCategoria" maxlength="10" placeholder="CAT005" required>
+                            </div>
+                            <div class="fg" style="margin:0;">
+                                <label>Nombre</label>
+                                <input type="text" name="nombre" maxlength="120" placeholder="Ej: Parrillas" required>
+                            </div>
+                            <button type="submit" class="btn-n"><i class="fas fa-save"></i> Registrar</button>
+                        </form>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>CodCategoria</th>
+                                <th>Nombre</th>
+                                <th>Usu.Creacion</th>
+                                <th>Fec.Creacion</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="cat : ${listaCategorias}">
+                                <td th:text="${cat.codCategoria}">CAT001</td>
+                                <td th:text="${cat.nombre}">Platos de fondo</td>
+                                <td th:text="${cat.usuCreacion}">dbo</td>
+                                <td th:text="${cat.fecCreacion}">2026-05-27</td>
+                                <td><span class="bdg act">Activo</span></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listaCategorias)}">
+                                <td colspan="5" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    Sin categorias registradas.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="tc-ft">
+                            <span>0 registros</span>
+                            <div class="pag">
+                                <button>Anterior</button>
+                                <button class="active">1</button>
+                                <button>Siguiente</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="cat-metodopago">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Metodos de pago</span>
+                            <div class="tc-tools">
+                                <button class="btn-n" onclick="oMo('Nuevo metodo de pago', fMP())"><i class="fas fa-plus"></i> Nuevo</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>CodMetodoPago</th>
+                                <th>Nombre</th>
+                                <th>Usu.Creacion</th>
+                                <th>Fec.Creacion</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Datos vacios -->
+                            </tbody>
+                        </table>
+                        <div class="tc-ft">
+                            <span>0 registros</span>
+                            <div class="pag">
+                                <button>Anterior</button>
+                                <button class="active">1</button>
+                                <button>Siguiente</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MENU / CARTA -->
+            <div th:if="${session.usuarioRol == 'ADMIN'}"
+                 class="sec"
+                 id="sec-cocina">
+                <h2 class="page-title">Menu / Carta</h2>
+                <div class="sec-tabs">
+                    <button class="sec-tab active" onclick="sTab('cocina', 'alimentos', this)">Lista de platos</button>
+                    <button class="sec-tab" onclick="sTab('cocina', 'gestionar', this)">Nuevo plato</button>
+                    <button class="sec-tab" onclick="sTab('cocina', 'categorias', this)">Categorias</button>
+                </div>
+
+                <div class="tab-pane active" id="coc-alimentos">
+                    <div class="tc" style="margin-bottom:1rem;">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Platos publicados en la carta</span>
+                            <div class="tc-tools">
+                                <div class="tc-search"><input type="text" id="buscar-plato-admin" placeholder="Buscar plato..." oninput="filtrarPlatosAdmin()"></div>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Codigo</th>
+                                    <th>Plato</th>
+                                    <th>Categoria</th>
+                                    <th>Precio</th>
+                                    <th>Descuento</th>
+                                    <th>Estado</th>
+                                    <th>Accion</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tb-platos-admin">
+                                <tr th:each="ali : ${listaAlimentos}">
+                                    <td>
+                                        <img th:src="${#strings.isEmpty(ali.img) ? 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80' : ali.img}"
+                                             th:alt="${ali.nombre}" style="width:64px;height:48px;object-fit:cover;border-radius:8px;">
+                                    </td>
+                                    <td th:text="${ali.codAlimento}">ALI001</td>
+                                    <td>
+                                        <strong th:text="${ali.nombre}">Plato</strong>
+                                        <div style="font-size:.72rem;color:var(--mu);max-width:360px;" th:text="${ali.descripcion}">Descripcion</div>
+                                    </td>
+                                    <td th:text="${ali.categoria}">Categoria</td>
+                                    <td th:text="|S/ ${ali.precio}|">S/ 0.00</td>
+                                    <td th:text="${ali.descuentoPromocion}">0</td>
+                                    <td>
+                                        <span th:if="${ali.estado == 'ACT'}" class="bdg act">Visible</span>
+                                        <span th:unless="${ali.estado == 'ACT'}" class="bdg ina">Oculto</span>
+                                    </td>
+                                    <td class="td-actions">
+                                        <button class="bta edit btn-editar-ali" title="Editar plato"
+                                                th:data-cod="${ali.codAlimento}"
+                                                th:data-categoria="${ali.codCategoria}"
+                                                th:data-nombre="${ali.nombre}"
+                                                th:data-descripcion="${ali.descripcion}"
+                                                th:data-img="${ali.img}"
+                                                th:data-descuento="${ali.descuentoPromocion}"
+                                                th:data-precio="${ali.precio}"
+                                                th:data-estado="${ali.estado}">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <button th:if="${ali.estado == 'ACT'}" class="bta del" title="Ocultar de la carta"
+                                                th:data-cod="${ali.codAlimento}"
+                                                onclick="confirmarDesactivarAlimento(this.dataset.cod)">
+                                            <i class="fas fa-eye-slash"></i>
+                                        </button>
+                                        <button th:unless="${ali.estado == 'ACT'}" class="bta view" title="Mostrar en la carta"
+                                                th:data-cod="${ali.codAlimento}"
+                                                onclick="confirmarActivarAlimento(this.dataset.cod)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listaAlimentos)}">
+                                    <td colspan="8" style="text-align:center;color:var(--mu);padding:2rem;">Sin platos registrados.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tc-ft">
+                            <span id="platos-admin-count" th:text="|${#lists.size(listaAlimentos)} registros|">0 registros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${session.usuarioRol == 'ADMIN'}" class="tab-pane" id="coc-gestionar">
+                    <div class="tc" style="max-width:860px;">
+                        <div class="tc-hd"><span class="tc-tit">Registrar nuevo plato</span></div>
+                        <form method="POST" th:action="@{/alimentos/registrar}" enctype="multipart/form-data"
+                              style="padding:1rem;display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:.85rem;">
+                            <div class="fg">
+                                <label>Codigo</label>
+                                <input type="text" name="codAlimento" maxlength="20" placeholder="ALI004" required>
+                            </div>
+                            <div class="fg">
+                                <label>Categoria</label>
+                                <select name="codCategoria" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option th:each="cat : ${listaCategorias}" th:value="${cat.codCategoria}" th:text="${cat.nombre}">Categoria</option>
+                                </select>
+                            </div>
+                            <div class="fg">
+                                <label>Nombre del plato</label>
+                                <input type="text" name="nombre" maxlength="160" placeholder="Ej: Chaufa especial" required>
+                            </div>
+                            <div class="fg">
+                                <label>Precio</label>
+                                <input type="number" name="precio" min="0" step="0.10" placeholder="0.00" required>
+                            </div>
+                            <div class="fg">
+                                <label>Descuento promocion</label>
+                                <input type="number" name="descuentoPromocion" min="0" step="0.10" value="0">
+                            </div>
+                            <div class="fg">
+                                <label>Imagen del plato</label>
+                                <input type="file" name="imagen" accept="image/*">
+                            </div>
+                            <div class="fg" style="grid-column:1/-1;">
+                                <label>Descripcion</label>
+                                <input type="text" name="descripcion" maxlength="500" placeholder="Descripcion que vera el cliente en el detalle">
+                            </div>
+                            <div style="grid-column:1/-1;display:flex;justify-content:flex-end;gap:.6rem;">
+                                <button type="button" class="btn-cancel" onclick="sTab('cocina', 'alimentos', document.querySelector('#sec-cocina .sec-tab'))">Cancelar</button>
+                                <button type="submit" class="btn-n"><i class="fas fa-save"></i> Guardar plato</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div th:if="${session.usuarioRol == 'ADMIN'}" class="tab-pane" id="coc-categorias">
+                    <div class="tc" style="margin-bottom:1rem;">
+                        <div class="tc-hd"><span class="tc-tit">Nueva categoria</span></div>
+                        <form method="POST" th:action="@{/categorias/registrar}" style="padding:1rem;display:grid;grid-template-columns:140px 1fr auto;gap:.75rem;align-items:end;">
+                            <div class="fg" style="margin:0;">
+                                <label>Codigo</label>
+                                <input type="text" name="codCategoria" maxlength="10" placeholder="CAT005" required>
+                            </div>
+                            <div class="fg" style="margin:0;">
+                                <label>Nombre</label>
+                                <input type="text" name="nombre" maxlength="120" placeholder="Ej: Parrillas" required>
+                            </div>
+                            <button type="submit" class="btn-n"><i class="fas fa-save"></i> Registrar</button>
+                        </form>
+                    </div>
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Categorias de la carta</span></div>
+                        <table>
+                            <thead><tr><th>Codigo</th><th>Nombre</th><th>Creado por</th><th>Fecha</th></tr></thead>
+                            <tbody>
+                            <tr th:each="cat : ${listaCategorias}">
+                                <td th:text="${cat.codCategoria}">CAT001</td>
+                                <td th:text="${cat.nombre}">Platos de fondo</td>
+                                <td th:text="${cat.usuCreacion}">dbo</td>
+                                <td th:text="${cat.fecCreacion}">2026-05-27</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listaCategorias)}">
+                                <td colspan="4" style="text-align:center;color:var(--mu);padding:2rem;">Sin categorias registradas.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MESAS -->
+            <div th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'MESE'}"
+                 th:class="${session.usuarioRol == 'MESE'} ? 'sec active' : 'sec'"
+                 id="sec-mesas">
+                <h2 class="page-title">Mesas</h2>
+                <div class="tc">
+                    <div class="tc-hd">
+                        <span class="tc-tit">Mesas del restaurante</span>
+                        <div class="tc-tools">
+                            <button class="btn-n" id="btn-nueva-mesa">
+                                <i class="fas fa-plus"></i> Nueva mesa
+                            </button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>NroMesa</th>
+                            <th>Descripcion</th>
+                            <th>Capacidad</th>
+                            <th>Estado</th>
+                            <th>Usu.Creacion</th>
+                            <th>Fec.Creacion</th>
+                            <th>Accion</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tb-mesas">
+                        <tr th:each="m : ${listaMesas}">
+                            <td th:text="${m.nroMesa}"></td>
+                            <td th:text="${m.descripcion}"></td>
+                            <td th:text="${m.capacidad}"></td>
+                            <td>
+                                <span th:if="${m.estado == 'ACT'}" class="bdg act">Activa</span>
+                                <span th:unless="${m.estado == 'ACT'}" class="bdg ina">Inactiva</span>
+                            </td>
+                            <td th:text="${m.usuCreacion}"></td>
+                            <td th:text="${m.fecCreacion}"></td>
+                            <td class="td-actions">
+                                <button class="bta edit btn-editar-mesa" title="Editar"
+                                        th:data-nro="${m.nroMesa}"
+                                        th:data-desc="${m.descripcion}"
+                                        th:data-cap="${m.capacidad}"
+                                        th:data-est="${m.estado}">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button th:if="${m.estado == 'ACT'}" class="bta del" title="Desactivar"
+                                        th:data-nro="${m.nroMesa}"
+                                        onclick="confirmarDesactivarMesa(this.dataset.nro)">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                                <button th:unless="${m.estado == 'ACT'}" class="bta view" title="Activar"
+                                        th:data-nro="${m.nroMesa}"
+                                        onclick="confirmarActivarMesa(this.dataset.nro)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listaMesas)}">
+                            <td colspan="7" style="text-align:center;color:var(--mu);padding:2rem;">Sin mesas registradas.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="tc-ft"><span>0 registros</span></div>
+                </div>
+            </div>
+
+            <!-- PEDIDOS -->
+            <div th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'MESE'}"
+                 class="sec"
+                 id="sec-pedidos">
+                <h2 class="page-title">Pedidos</h2>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-clock"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Pendientes</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e0f0ff;color:#3a5ba0;"><i class="fas fa-fire-burner"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">En cocina</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-circle-check"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Listos</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fce7f3;color:#be185d;"><i class="fas fa-truck-fast"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Delivery</div></div>
+                    </div>
+                </div>
+
+                <div class="sec-tabs">
+                    <button class="sec-tab active" onclick="sTab('pedidos', 'gestped', this)">Pedidos activos</button>
+                    <button th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'MESE'}" class="sec-tab" onclick="sTab('pedidos', 'reserva', this)">Reservas</button>
+                </div>
+
+                <div class="tab-pane active" id="ped-gestped">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Gestion de pedidos</span>
+                            <div class="tc-tools">
+                                <select class="ctrl">
+                                    <option>Todos los estados</option>
+                                    <option>PENDIENTE</option>
+                                    <option>PREPARANDO</option>
+                                    <option>LISTO</option>
+                                    <option>ENTREGADO</option>
+                                </select>
+                                <div class="tc-search"><input type="text" placeholder="Buscar pedido o cliente..."></div>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>NroPedido</th>
+                                    <th>Cliente</th>
+                                    <th>Tipo</th>
+                                    <th>Mesa / Direccion</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Accion</th>
+                                </tr>
+                                </thead>
+                                <tbody id="ped-tb">
+                                <tr th:each="p : ${listaPedidos}" style="cursor:pointer;" th:data-nro="${p.nroPedido}" onclick="verDetallePedido(this.dataset.nro)">
+                                    <td th:text="${p.nroPedido}"></td>
+                                    <td th:text="${p.codCliente}"></td>
+                                    <td th:text="${p.esLocal == 1 ? 'Local' : 'Delivery'}"></td>
+                                    <td th:text="${p.esLocal == 1 ? (p.nroMesa != null ? p.nroMesa : 'Local') : p.direccion}"></td>
+                                    <td th:text="${p.fecPedido}"></td>
+                                    <td>
+                                        <span th:if="${p.estado == 'PENDIENTE'}" class="bdg act">Pendiente</span>
+                                        <span th:if="${p.estado == 'PREPARANDO'}" class="bdg" style="background:#e0f0ff;color:#3a5ba0;">Preparando</span>
+                                        <span th:if="${p.estado == 'LISTO'}" class="bdg" style="background:#d1fae5;color:#059669;">Listo</span>
+                                        <span th:if="${p.estado == 'ENTREGADO'}" class="bdg ina">Entregado</span>
+                                    </td>
+                                    <td class="td-actions">
+                                        <button class="bta view" type="button" th:data-nro="${p.nroPedido}" onclick="verDetallePedido(this.dataset.nro)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button th:if="${p.estado == 'PENDIENTE'}" class="bta edit" type="button" th:data-nro="${p.nroPedido}" onclick="cambiarEstadoPedido(this.dataset.nro, 'PREPARANDO')">
+                                            <i class="fas fa-fire"></i>
+                                        </button>
+                                        <button th:if="${p.estado == 'PREPARANDO'}" class="bta edit" type="button" th:data-nro="${p.nroPedido}" onclick="cambiarEstadoPedido(this.dataset.nro, 'LISTO')">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button th:if="${p.estado == 'LISTO'}" class="bta del" type="button" th:data-nro="${p.nroPedido}" onclick="cambiarEstadoPedido(this.dataset.nro, 'ENTREGADO')">
+                                            <i class="fas fa-truck-fast"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listaPedidos)}">
+                                    <td colspan="7" style="text-align:center;color:var(--mu);padding:2rem;">
+                                        Los pedidos apareceran aqui cuando conectemos pedido y pedido_detalle.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tc-ft"><span id="ped-info">0 registros</span></div>
+                    </div>
+
+                    <div class="tc" style="margin-top:1rem;">
+                        <div class="tc-hd"><span class="tc-tit">Detalle del pedido seleccionado</span></div>
+                        <div id="ped-detalle" style="padding:1.1rem;color:var(--mu);text-align:center;">
+                            <i class="fas fa-receipt" style="font-size:2rem;margin-bottom:.5rem;display:block;color:var(--bd);"></i>
+                            Selecciona un pedido para ver platos, cantidades y notas para cocina.
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'MESE'}" class="tab-pane" id="ped-reserva">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Reservas de mesas</span>
+                            <div class="tc-tools">
+                                <button class="btn-n" id="btn-nueva-reserva"><i class="fas fa-plus"></i> Nueva reserva</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>CodReserva</th>
+                                <th>Mesa</th>
+                                <th>Cliente</th>
+                                <th>Fecha reserva</th>
+                                <th>Estado</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tb-reservas">
+                            <tr th:each="r : ${listaReservas}">
+                                <td th:text="${r.codReserva}"></td>
+                                <td th:text="${r.nroMesa}"></td>
+                                <td th:text="${r.codCliente}"></td>
+                                <td th:text="${r.fecReserva}"></td>
+                                <td>
+                                    <span th:if="${r.estado == 'ACT'}" class="bdg act">Activa</span>
+                                    <span th:if="${r.estado == 'INA'}" class="bdg ina">Cancelada</span>
+                                    <span th:if="${r.estado == 'ATE'}" class="bdg" style="background:#e0f0ff;color:#3a5ba0;">Atendida</span>
+                                </td>
+                                <td class="td-actions">
+                                    <button th:if="${r.estado == 'ACT'}" class="bta view" title="Tomar pedido"
+                                            th:data-cod="${r.codReserva}"
+                                            th:data-mesa="${r.nroMesa}"
+                                            th:data-cliente="${r.codCliente}"
+                                            th:data-fecha="${r.fecReserva}"
+                                            onclick="abrirTomarPedidoReserva(this.dataset)">
+                                        <i class="fas fa-bowl-food"></i>
+                                    </button>
+                                    <button th:if="${r.estado == 'ACT'}" class="bta del" title="Cancelar"
+                                            th:data-cod="${r.codReserva}"
+                                            onclick="confirmarCancelarReserva(this.dataset.cod)">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    <button th:if="${r.estado == 'INA'}" class="bta view" title="Reactivar"
+                                            th:data-cod="${r.codReserva}"
+                                            onclick="confirmarReactivarReserva(this.dataset.cod)">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listaReservas)}">
+                                <td colspan="6" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    Sin reservas registradas.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="tc-ft"><span>0 registros</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal TOMAR PEDIDO DESDE RESERVA -->
+            <div class="mo" id="mo-res-pedido">
+                <div class="mo-box" style="max-width:760px;">
+                    <h4>Tomar pedido desde reserva</h4>
+                    <div style="padding:.25rem 0 1rem;color:var(--mu);font-size:.95rem;">
+                        Reserva <strong id="rp-cod"></strong> - Mesa <strong id="rp-mesa"></strong> - Cliente <strong id="rp-cli"></strong>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1.1fr .45fr auto;gap:.75rem;align-items:end;">
+                        <div class="fg" style="margin:0;">
+                            <label>Plato</label>
+                            <select id="rp-plato">
+                                <option value="">Seleccionar plato...</option>
+                                <option th:each="a : ${listaAlimentos}"
+                                        th:value="${a.id}"
+                                        th:data-nombre="${a.nombre}"
+                                        th:data-categoria="${a.categoria}"
+                                        th:data-precio="${a.precio}"
+                                        th:text="${a.nombre + ' - ' + a.categoria + ' (S/ ' + #numbers.formatDecimal(a.precio, 1, 2) + ')'}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="fg" style="margin:0;">
+                            <label>Cantidad</label>
+                            <input type="number" id="rp-cantidad" min="1" value="1">
+                        </div>
+                        <button type="button" class="btn-n" onclick="agregarItemReservaPedido()">
+                            <i class="fas fa-plus"></i> Agregar
+                        </button>
+                    </div>
+
+                    <div class="table-wrap" style="margin-top:1rem;">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Plato</th>
+                                <th>Categoria</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody id="rp-items">
+                            <tr>
+                                <td colspan="6" style="text-align:center;color:var(--mu);padding:1.5rem;">
+                                    Todavia no agregaste platos.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;">
+                        <div style="font-weight:700;">Total: <span id="rp-total">S/ 0.00</span></div>
+                        <div class="mo-btns">
+                            <button type="button" class="btn-cancel" onclick="cMo('mo-res-pedido')">Cancelar</button>
+                            <button type="button" class="btn-save" onclick="confirmarTomarPedidoReserva()">
+                                <i class="fas fa-check"></i> Generar pedido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- COCINA -->
+            <div th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'CHEF'}"
+                 th:class="${session.usuarioRol == 'CHEF'} ? 'sec active' : 'sec'"
+                 id="sec-cocina-pedidos">
+                <h2 class="page-title">Cocina</h2>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-clock"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Por preparar</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e0f0ff;color:#3a5ba0;"><i class="fas fa-fire-burner"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Preparando</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-bell-concierge"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Listos para entregar</div></div>
+                    </div>
+                </div>
+
+                <div class="tc">
+                    <div class="tc-hd">
+                        <span class="tc-tit">Pedidos para preparar</span>
+                        <div class="tc-tools">
+                            <select class="ctrl" id="cocina-filtro-estado">
+                                <option>PENDIENTE</option>
+                                <option>PREPARANDO</option>
+                                <option>LISTO</option>
+                                <option selected>TODOS</option>
+                            </select>
+                            <div class="tc-search"><input type="text" placeholder="Buscar plato o pedido..."></div>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>NroPedido</th>
+                                <th>Tipo</th>
+                                <th>Platos</th>
+                                <th>Notas</th>
+                                <th>Estado</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody id="cocina-tb">
+                            <tr th:each="p : ${listaPedidosCocina}">
+                                <td th:text="${p.nroPedido}" style="cursor:pointer;" th:data-nro="${p.nroPedido}" onclick="verDetallePedidoCocina(this.dataset.nro)"></td>
+                                <td th:text="${p.esLocal == 1 ? 'Local' : 'Delivery'}" style="cursor:pointer;" th:data-nro="${p.nroPedido}" onclick="verDetallePedidoCocina(this.dataset.nro)"></td>
+                                <td th:text="${p.platos}" style="cursor:pointer;" th:data-nro="${p.nroPedido}" onclick="verDetallePedidoCocina(this.dataset.nro)"></td>
+                                <td th:text="${#strings.isEmpty(p.descripcion) ? '-' : p.descripcion}" style="cursor:pointer;" th:data-nro="${p.nroPedido}" onclick="verDetallePedidoCocina(this.dataset.nro)"></td>
+                                <td>
+                                    <span th:if="${p.estado == 'PENDIENTE'}" class="bdg act">Pendiente</span>
+                                    <span th:if="${p.estado == 'PREPARANDO'}" class="bdg" style="background:#e0f0ff;color:#3a5ba0;">Preparando</span>
+                                </td>
+                                <td class="td-actions">
+                                    <button th:if="${p.estado == 'PENDIENTE'}" class="bta edit" type="button" th:data-nro="${p.nroPedido}" onclick="cambiarEstadoPedido(this.dataset.nro, 'PREPARANDO')">
+                                        <i class="fas fa-fire"></i>
+                                    </button>
+                                    <button th:if="${p.estado == 'PREPARANDO'}" class="bta edit" type="button" th:data-nro="${p.nroPedido}" onclick="cambiarEstadoPedido(this.dataset.nro, 'LISTO')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listaPedidosCocina)}">
+                                <td colspan="6" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    No hay pedidos pendientes o en preparacion para cocina.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tc-ft"><span id="cocina-info">0 registros</span></div>
+                </div>
+
+                <div class="tc" style="margin-top:1rem;">
+                    <div class="tc-hd"><span class="tc-tit">Detalle del pedido de cocina</span></div>
+                    <div id="cocina-detalle" style="padding:1.1rem;color:var(--mu);text-align:center;">
+                        <i class="fas fa-receipt" style="font-size:2rem;margin-bottom:.5rem;display:block;color:var(--bd);"></i>
+                        Selecciona un pedido para ver sus platos y notas.
+                    </div>
+                </div>
+
+                <div class="tc" style="margin-top:1rem;">
+                    <div class="tc-hd"><span class="tc-tit">Flujo de cocina</span></div>
+                    <div style="padding:1rem;display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:.85rem;">
+                        <div class="stat-card"><div class="stat-icon" style="background:#fff7ed;color:#d97706;"><i class="fas fa-list"></i></div><div><div class="stat-num" style="font-size:1rem;">PENDIENTE</div><div class="stat-lbl">Pedido recibido</div></div></div>
+                        <div class="stat-card"><div class="stat-icon" style="background:#eff6ff;color:#2563eb;"><i class="fas fa-fire"></i></div><div><div class="stat-num" style="font-size:1rem;">PREPARANDO</div><div class="stat-lbl">Cocina trabajando</div></div></div>
+                        <div class="stat-card"><div class="stat-icon" style="background:#ecfdf5;color:#059669;"><i class="fas fa-check"></i></div><div><div class="stat-num" style="font-size:1rem;">LISTO</div><div class="stat-lbl">Pasa a entrega o pago</div></div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- PAGOS -->
+            <div th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'MESE'}" class="sec" id="sec-pagos">
+                <h2 class="page-title">Pagos</h2>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-cash-register"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Por cobrar</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-money-bill-wave"></i></div>
+                        <div><div class="stat-num">S/ 0</div><div class="stat-lbl">Cobrado hoy</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e0f0ff;color:#3a5ba0;"><i class="fas fa-file-invoice"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Comprobantes</div></div>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:1rem;align-items:start;">
+                    <div class="tc">
+                        <div class="tc-hd">
+                            <span class="tc-tit">Pedidos listos para cobrar</span>
+                            <div class="tc-tools">
+                                <div class="tc-search"><input type="text" placeholder="Buscar pedido o cliente..."></div>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>NroPedido</th>
+                                    <th>Cliente</th>
+                                    <th>Tipo</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Accion</th>
+                                </tr>
+                                </thead>
+                                <tbody id="pag-tb">
+                                <tr>
+                                    <td colspan="6" style="text-align:center;color:var(--mu);padding:2rem;">
+                                        Los pedidos listos apareceran aqui al conectar pedido y comprobante.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tc-ft"><span id="pag-info">0 registros</span></div>
+                    </div>
+
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Registrar pago</span></div>
+                        <div style="padding:1.1rem;">
+                            <div class="fg">
+                                <label>NroPedido</label>
+                                <select id="cp-ped">
+                                    <option value="">Seleccionar pedido...</option>
+                                </select>
+                            </div>
+                            <div class="fg">
+                                <label>Tipo de comprobante</label>
+                                <select id="cp-tipo">
+                                    <option value="TC001">Boleta de Venta</option>
+                                    <option value="TC002">Factura</option>
+                                    <option value="TC003">Ticket</option>
+                                </select>
+                            </div>
+                            <div class="fg">
+                                <label>Metodo de pago</label>
+                                <select id="cp-mp">
+                                    <option value="MP001">Efectivo</option>
+                                    <option value="MP002">Tarjeta</option>
+                                    <option value="MP003">Yape</option>
+                                    <option value="MP004">Plin</option>
+                                </select>
+                            </div>
+                            <div class="fg">
+                                <label>Monto recibido</label>
+                                <input type="number" id="cp-monto" placeholder="0.00" step="0.10">
+                            </div>
+                            <div class="fg">
+                                <label>NroComprobante</label>
+                                <input type="text" id="cp-nro" value="B001-00001" readonly style="background:#f8f9fa;">
+                            </div>
+                            <button class="btn-n grn" style="width:100%;justify-content:center;" onclick="genComp()">
+                                <i class="fas fa-file-circle-check"></i> Cobrar y generar comprobante
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tc" style="margin-top:1rem;">
+                    <div class="tc-hd"><span class="tc-tit">Pagos emitidos</span></div>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Comprobante</th>
+                            <th>Pedido</th>
+                            <th>Cliente</th>
+                            <th>Metodo</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="6" style="text-align:center;color:var(--mu);padding:2rem;">
+                                Los pagos se listaran aqui al conectar las tablas pago y comprobante.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="tc-ft"><span>0 registros</span></div>
+                </div>
+            </div>
+            <!-- DELIVERY -->
+            <div th:if="${session.usuarioRol == 'ADMIN' || session.usuarioRol == 'DELI'}"
+                 th:class="${session.usuarioRol == 'DELI'} ? 'sec active' : 'sec'"
+                 id="sec-entregas">
+                <h2 class="page-title">Delivery</h2>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-box"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Por recoger</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e0f0ff;color:#3a5ba0;"><i class="fas fa-truck-fast"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">En camino</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-circle-check"></i></div>
+                        <div><div class="stat-num">0</div><div class="stat-lbl">Entregados hoy</div></div>
+                    </div>
+                </div>
+
+                <div class="tc">
+                    <div class="tc-hd">
+                        <span class="tc-tit">Pedidos delivery</span>
+                        <div class="tc-tools">
+                            <select class="ctrl">
+                                <option>Todos</option>
+                                <option>LISTO</option>
+                                <option>EN CAMINO</option>
+                                <option>ENTREGADO</option>
+                            </select>
+                            <div class="tc-search"><input type="text" placeholder="Buscar cliente, pedido o direccion..."></div>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>NroPedido</th>
+                                <th>Cliente</th>
+                                <th>Direccion</th>
+                                <th>Telefono</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Accion</th>
+                            </tr>
+                            </thead>
+                            <tbody id="ent-tb-ped">
+                            <tr th:each="p : ${listaPedidosDelivery}">
+                                <td th:text="${p.nroPedido}"></td>
+                                <td th:text="${p.codCliente}"></td>
+                                <td th:text="${p.direccion != null ? p.direccion : '-'}"></td>
+                                <td th:text="${p.telefono != null ? p.telefono : '-'}"></td>
+                                <td th:text="${'S/ ' + #numbers.formatDecimal(p.total, 1, 2)}"></td>
+                                <td>
+                                    <span th:if="${p.estado == 'PENDIENTE'}" class="bdg act">Pendiente</span>
+                                    <span th:if="${p.estado == 'PREPARANDO'}" class="bdg" style="background:#e0f0ff;color:#3a5ba0;">Preparando</span>
+                                    <span th:if="${p.estado == 'LISTO'}" class="bdg" style="background:#d1fae5;color:#059669;">Listo</span>
+                                </td>
+                                <td class="td-actions">
+                                    <button class="bta view" type="button" th:attr="data-nro=${p.nroPedido}" onclick="verDetallePedidoDelivery(this.dataset.nro)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(listaPedidosDelivery)}">
+                                <td colspan="7" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    No hay pedidos delivery operativos para mostrar.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tc-ft"><span id="ent-ped-info">0 registros</span></div>
+                </div>
+
+                <div class="report-tables">
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Detalle de entrega</span></div>
+                        <div id="delivery-detalle" style="padding:1.1rem;color:var(--mu);text-align:center;">
+                            <i class="fas fa-location-dot" style="font-size:2rem;margin-bottom:.5rem;display:block;color:var(--bd);"></i>
+                            Selecciona un pedido para ver direccion, telefono, referencias y detalle de platos.
+                        </div>
+                    </div>
+
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Flujo delivery</span></div>
+                        <div style="padding:1rem;display:grid;gap:.75rem;">
+                            <div class="stat-card"><div class="stat-icon" style="background:#ecfdf5;color:#059669;"><i class="fas fa-bell"></i></div><div><div class="stat-num" style="font-size:1rem;">LISTO</div><div class="stat-lbl">Cocina termino el pedido</div></div></div>
+                            <div class="stat-card"><div class="stat-icon" style="background:#eff6ff;color:#2563eb;"><i class="fas fa-route"></i></div><div><div class="stat-num" style="font-size:1rem;">EN CAMINO</div><div class="stat-lbl">Delivery salio al destino</div></div></div>
+                            <div class="stat-card"><div class="stat-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fas fa-check"></i></div><div><div class="stat-num" style="font-size:1rem;">ENTREGADO</div><div class="stat-lbl">Pedido cerrado</div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- REPORTES -->
+            <div th:if="${session.usuarioRol == 'ADMIN'}" class="sec" id="sec-reportes">
+                <h2 class="page-title">Reportes</h2>
+
+                <div class="tc" style="margin-bottom:1rem;">
+                    <div class="tc-hd">
+                        <span class="tc-tit">Filtros</span>
+                        <div class="tc-tools report-filters">
+                            <label>
+                                <span>Desde</span>
+                                <input class="ctrl" type="date" id="rf-desde">
+                            </label>
+                            <label>
+                                <span>Hasta</span>
+                                <input class="ctrl" type="date" id="rf-hasta">
+                            </label>
+                            <button class="btn-n"><i class="fas fa-search"></i> Filtrar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-money-bill-wave"></i></div><div><div class="stat-num" id="rv-tot">S/ 0</div><div class="stat-lbl">Ventas totales</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e0f0ff;color:#3a5ba0;"><i class="fas fa-receipt"></i></div><div><div class="stat-num" id="rv-ped">0</div><div class="stat-lbl">Pedidos</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-star"></i></div><div><div class="stat-num" id="rv-pop">-</div><div class="stat-lbl">Plato mas vendido</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fce7f3;color:#be185d;"><i class="fas fa-file-invoice"></i></div><div><div class="stat-num" id="rv-comp">0</div><div class="stat-lbl">Comprobantes</div></div>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start;margin-top:1rem;">
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Ventas por pedido</span></div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>NroPedido</th>
+                                <th>Cliente</th>
+                                <th>Tipo</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                            </tr>
+                            </thead>
+                            <tbody id="rv-tb">
+                            <tr>
+                                <td colspan="5" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    Las ventas se calcularan desde pedido, pedido_detalle y pago.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="tc-ft"><span id="rv-info">0 registros</span></div>
+                    </div>
+
+                    <div class="tc">
+                        <div class="tc-hd"><span class="tc-tit">Platos vendidos</span></div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Plato</th>
+                                <th>Categoria</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody id="rp-platos-tb">
+                            <tr>
+                                <td colspan="4" style="text-align:center;color:var(--mu);padding:2rem;">
+                                    Este resumen saldra de pedido_detalle y alimento.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="tc-ft"><span id="rp-platos-info">0 registros</span></div>
+                    </div>
+                </div>
+
+                <div class="tc" style="margin-top:1rem;">
+                    <div class="tc-hd">
+                        <span class="tc-tit">Comprobantes emitidos</span>
+                        <div class="tc-tools">
+                            <div class="tc-search"><input type="text" placeholder="Buscar comprobante..."></div>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Comprobante</th>
+                            <th>Pedido</th>
+                            <th>Cliente</th>
+                            <th>Metodo pago</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                        <tbody id="rlc-tb">
+                        <tr>
+                            <td colspan="6" style="text-align:center;color:var(--mu);padding:2rem;">
+                                Los comprobantes se listaran desde comprobante y pago.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="tc-ft"><span id="rlc-info">0 registros</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:src="@{/js/dashboard2.js}"></script>
+
+
+</body>
+</html>
